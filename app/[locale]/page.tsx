@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
 type Dive = {
   datetime: string;
@@ -12,6 +13,9 @@ type Dive = {
 type Result = { dive: Dive; qrDataUrl: string; qrPayload: string };
 
 export default function Home() {
+  const t = useTranslations("Home");
+  const locale = useLocale();
+
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +35,10 @@ export default function Home() {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Upload failed");
+      if (!res.ok) throw new Error(data.error ?? t("uploadFailed"));
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setLoading(false);
     }
@@ -42,9 +46,16 @@ export default function Home() {
 
   return (
     <main style={{ padding: "2rem", maxWidth: "40rem", margin: "0 auto" }}>
-      <h1>Convert to SSI</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "baseline" }}>
+        <h1 style={{ margin: 0 }}>{t("heading")}</h1>
+        <div style={{ fontSize: "0.9rem" }}>
+          <a href={locale === "en" ? "/zh" : "/en"} style={{ color: "#0366d6", textDecoration: "none" }}>
+            {locale === "en" ? "繁體中文" : "English"}
+          </a>
+        </div>
+      </div>
       <p style={{ marginTop: "0.5rem", color: "#666" }}>
-        Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app.
+        {t("intro")}
       </p>
 
       <form onSubmit={handleSubmit} style={{ marginTop: "1.5rem" }}>
@@ -55,7 +66,7 @@ export default function Home() {
           disabled={loading}
         />
         <button type="submit" disabled={!file || loading} style={{ marginLeft: "0.5rem" }}>
-          {loading ? "Processing…" : "Upload"}
+          {loading ? t("processing") : t("upload")}
         </button>
       </form>
 
@@ -65,15 +76,22 @@ export default function Home() {
 
       {result && (
         <div style={{ marginTop: "1.5rem" }}>
-          <p><strong>Dive</strong>: {result.dive.datetime} — {result.dive.divetime} min, max {result.dive.depth_m} m</p>
+          <p>
+            <strong>{t("diveLine", {
+              datetime: result.dive.datetime,
+              divetime: result.dive.divetime,
+              depth_m: result.dive.depth_m
+            })}</strong>
+          </p>
           <div style={{ marginTop: "0.5rem" }}>
-            <img src={result.qrDataUrl} alt="QR code for SSI" />
+            <img src={result.qrDataUrl} alt={t("qrAlt")} />
           </div>
           <p style={{ marginTop: "0.5rem", fontSize: "0.85rem", color: "#666" }}>
-            Scan with SSI app. Payload: {result.qrPayload}
+            {t("scanHint", { payload: result.qrPayload })}
           </p>
         </div>
       )}
     </main>
   );
 }
+

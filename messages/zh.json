@@ -1,0 +1,17 @@
+{
+  "App": {
+    "title": "轉換為 SSI",
+    "description": "上傳潛水紀錄檔（例如 Garmin 的 .fit）以產生可供 SSI App 掃描的 QR Code。"
+  },
+  "Home": {
+    "heading": "轉換為 SSI",
+    "intro": "上傳潛水紀錄檔（例如 Garmin 的 .fit）以產生可供 SSI App 掃描的 QR Code。",
+    "upload": "上傳",
+    "processing": "處理中…",
+    "uploadFailed": "上傳失敗",
+    "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m} 公尺",
+    "qrAlt": "SSI 的 QR Code",
+    "scanHint": "請用 SSI App 掃描。內容：{payload}"
+  }
+}
+

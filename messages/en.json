@@ -1,0 +1,17 @@
+{
+  "App": {
+    "title": "Convert to SSI",
+    "description": "Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app."
+  },
+  "Home": {
+    "heading": "Convert to SSI",
+    "intro": "Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app.",
+    "upload": "Upload",
+    "processing": "Processing…",
+    "uploadFailed": "Upload failed",
+    "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m} m",
+    "qrAlt": "QR code for SSI",
+    "scanHint": "Scan with SSI app. Payload: {payload}"
+  }
+}
+
