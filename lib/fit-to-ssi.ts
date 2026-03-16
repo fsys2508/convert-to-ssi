@@ -25,7 +25,6 @@ export interface SsiData {
   var_watertype_id?: number;
   var_current_id?: number;
   var_surface_id?: number;
-  var_divetype_id?: number;
   /** Water temp °C (from device if available) */
   watertemp_c?: number;
   airtemp_c?: number;
@@ -141,13 +140,12 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     datetime: toSsiDatetime(startTime),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
     avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
-    var_weather_id: 1,
-    var_entry_id: 22,
-    var_water_body_id: 13,
-    var_watertype_id: 5,
-    var_current_id: 7,
-    var_surface_id: 10,
-    var_divetype_id: 24,
+    var_weather_id: 1,        // Cloudless
+    var_entry_id: 22,         // Boat Dive
+    var_water_body_id: 13,    // Ocean
+    var_watertype_id: 5,      // Salt Water
+    var_current_id: 7,        // Light Current
+    var_surface_id: 10,       // Calm
     ...(watertemp_c != null && { watertemp_c }),
     ...(watertemp_max_c != null && { watertemp_max_c }),
     ...(airtemp_c != null && { airtemp_c }),
@@ -162,7 +160,7 @@ export function ssiDataToQrPayload(data: SsiData): string {
   const keys: (keyof SsiData)[] = [
     "dive_type", "divetime", "datetime", "depth_m", "avg_depth_m",
     "var_weather_id", "var_entry_id", "var_water_body_id", "var_watertype_id",
-    "var_current_id", "var_surface_id", "var_divetype_id",
+    "var_current_id", "var_surface_id",
     "watertemp_c", "airtemp_c", "vis_m", "watertemp_max_c",
   ];
   for (const k of keys) {
