@@ -17,8 +17,7 @@ export interface SsiData {
   datetime: string;
   /** Max depth in meters */
   depth_m: number;
-  /** SSI site id (empty when importing – user picks in app) */
-  site?: string | number;
+  avg_depth_m: number;
   /** SSI taxonomy / enums (defaults when not from FIT) */
   var_weather_id?: number;
   var_entry_id?: number;
@@ -27,11 +26,6 @@ export interface SsiData {
   var_current_id?: number;
   var_surface_id?: number;
   var_divetype_id?: number;
-  /** User (empty on import – from logged-in user in app) */
-  user_master_id?: string | number;
-  user_firstname?: string;
-  user_lastname?: string;
-  user_leader_id?: string;
   /** Water temp °C (from device if available) */
   watertemp_c?: number;
   airtemp_c?: number;
@@ -86,27 +80,58 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const divetime = Math.round((totalElapsedSeconds / 60) * 10) / 10; // one decimal like SSI sample
 
   let maxDepthMeters = 0;
+  let avgDepthMeters = 0;
   let watertemp_c: number | undefined;
   let watertemp_max_c: number | undefined;
+  let airtemp_c: number | undefined;
 
   const lap = lapMsgs?.[0];
   const diveSummary = diveSummaryMsgs?.[0];
+
+  // Max depth from lap/dive summary if available
   if (lap?.maxDepth != null) maxDepthMeters = lap.maxDepth as number;
   if (diveSummary?.maxDepth != null) maxDepthMeters = diveSummary.maxDepth as number;
   if (lap?.avgDepth != null && maxDepthMeters === 0) maxDepthMeters = lap.avgDepth as number;
   if (diveSummary?.avgDepth != null && maxDepthMeters === 0) maxDepthMeters = diveSummary.avgDepth as number;
 
-  if (maxDepthMeters === 0 && Array.isArray(recordMsgs)) {
+  if (Array.isArray(recordMsgs)) {
+    let depthSum = 0;
+    let depthCount = 0;
     for (const r of recordMsgs) {
       const d = (r as Record<string, unknown>).depth as number | undefined;
-      if (d != null && d > maxDepthMeters) maxDepthMeters = d;
+      if (d != null) {
+        if (d > maxDepthMeters) maxDepthMeters = d;
+        depthSum += d;
+        depthCount += 1;
+      }
     }
+    if (depthCount > 0) {
+      avgDepthMeters =
+        (lap?.avgDepth as number | undefined) ??
+        (diveSummary?.avgDepth as number | undefined) ??
+        depthSum / depthCount;
+    } else {
+      avgDepthMeters =
+        (lap?.avgDepth as number | undefined) ??
+        (diveSummary?.avgDepth as number | undefined) ??
+        0;
+    }
+  } else {
+    avgDepthMeters =
+      (lap?.avgDepth as number | undefined) ??
+      (diveSummary?.avgDepth as number | undefined) ??
+      0;
   }
 
   // Water temp from session/lap if present (FIT scale/units may vary)
   if (lap?.avgTemperature != null) watertemp_c = lap.avgTemperature as number;
   if (session?.avgTemperature != null && watertemp_c == null) watertemp_c = session.avgTemperature as number;
   if (lap?.maxTemperature != null) watertemp_max_c = lap.maxTemperature as number;
+
+  // Air temperature: use session-level temperature when available and distinct from water
+  if (session?.minTemperature != null) {
+    airtemp_c = session.minTemperature as number;
+  }
 
   return {
     dive: true,
@@ -115,7 +140,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     divetime,
     datetime: toSsiDatetime(startTime),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
-    site: "",
+    avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
     var_weather_id: 1,
     var_entry_id: 22,
     var_water_body_id: 13,
@@ -123,12 +148,9 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     var_current_id: 7,
     var_surface_id: 10,
     var_divetype_id: 24,
-    user_master_id: "",
-    user_firstname: "",
-    user_lastname: "",
-    user_leader_id: "",
     ...(watertemp_c != null && { watertemp_c }),
     ...(watertemp_max_c != null && { watertemp_max_c }),
+    ...(airtemp_c != null && { airtemp_c }),
   };
 }
 
@@ -138,10 +160,9 @@ export function ssiDataToQrPayload(data: SsiData): string {
   if (data.dive) parts.push("dive");
   if (data.noid) parts.push("noid");
   const keys: (keyof SsiData)[] = [
-    "dive_type", "divetime", "datetime", "depth_m", "site",
+    "dive_type", "divetime", "datetime", "depth_m", "avg_depth_m",
     "var_weather_id", "var_entry_id", "var_water_body_id", "var_watertype_id",
     "var_current_id", "var_surface_id", "var_divetype_id",
-    "user_master_id", "user_firstname", "user_lastname", "user_leader_id",
     "watertemp_c", "airtemp_c", "vis_m", "watertemp_max_c",
   ];
   for (const k of keys) {
