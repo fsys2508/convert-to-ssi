@@ -6,12 +6,53 @@
   "Home": {
     "heading": "Convert to SSI",
     "intro": "Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app.",
+    "ssiDefaultsTitle": "SSI defaults (optional)",
+    "ssiDefaultsHint": "These IDs are SSI taxonomy values. Leave defaults unless you know you need different ones.",
+    "ssiFieldLabels": {
+      "var_weather_id": "Weather",
+      "var_entry_id": "Entry",
+      "var_water_body_id": "Water body",
+      "var_watertype_id": "Water type",
+      "var_current_id": "Current",
+      "var_surface_id": "Surface"
+    },
     "upload": "Upload",
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
     "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m} m",
     "qrAlt": "QR code for SSI",
-    "scanHint": "Scan with SSI app. Payload: {payload}"
+    "scanHint": "Scan with SSI app. Payload: {payload}",
+    "ssiOptions": {
+      "custom": "Others",
+      "var_entry_id": {
+        "shore": "Shore/Beach",
+        "boat": "Boat Dive"
+      },
+      "var_water_body_id": {
+        "ocean": "Ocean"
+      },
+      "var_watertype_id": {
+        "fresh": "Fresh Water",
+        "salt": "Salt Water"
+      },
+      "var_current_id": {
+        "no": "No Current",
+        "light": "Light Current",
+        "strong": "Strong Current",
+        "ripping": "Ripping Current"
+      },
+      "var_surface_id": {
+        "calm": "Calm",
+        "moving": "Moving",
+        "stormy": "Stormy"
+      },
+      "var_weather_id": {
+        "cloudless": "Cloudless",
+        "cloudy": "Cloudy",
+        "rainy": "Rainy",
+        "snow": "Snow"
+      }
+    }
   }
 }
 

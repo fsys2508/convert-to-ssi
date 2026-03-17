@@ -33,6 +33,23 @@ export interface SsiData {
   watertemp_max_c?: number;
 }
 
+export const DEFAULT_SSI_VARS: Pick<
+  SsiData,
+  | "var_weather_id"
+  | "var_entry_id"
+  | "var_water_body_id"
+  | "var_watertype_id"
+  | "var_current_id"
+  | "var_surface_id"
+> = {
+  var_weather_id: 1, // Cloudless
+  var_entry_id: 22, // Boat Dive
+  var_water_body_id: 13, // Ocean
+  var_watertype_id: 5, // Salt Water
+  var_current_id: 7, // Light Current
+  var_surface_id: 10, // Calm
+};
+
 export function decodeFitFile(arrayBuffer: ArrayBuffer): {
   fitData: Record<string, unknown[]>;
   errors: unknown[];
@@ -140,12 +157,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     datetime: toSsiDatetime(startTime),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
     avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
-    var_weather_id: 1,        // Cloudless
-    var_entry_id: 22,         // Boat Dive
-    var_water_body_id: 13,    // Ocean
-    var_watertype_id: 5,      // Salt Water
-    var_current_id: 7,        // Light Current
-    var_surface_id: 10,       // Calm
+    ...DEFAULT_SSI_VARS,
     ...(watertemp_c != null && { watertemp_c }),
     ...(watertemp_max_c != null && { watertemp_max_c }),
     ...(airtemp_c != null && { airtemp_c }),

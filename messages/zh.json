@@ -6,12 +6,53 @@
   "Home": {
     "heading": "轉換為 SSI",
     "intro": "上傳潛水紀錄檔（例如 Garmin 的 .fit）以產生可供 SSI App 掃描的 QR Code。",
+    "ssiDefaultsTitle": "SSI 預設值（可選）",
+    "ssiDefaultsHint": "這些 ID 是 SSI 的分類值。除非你確定需要修改，否則建議維持預設。",
+    "ssiFieldLabels": {
+      "var_weather_id": "天氣",
+      "var_entry_id": "入水方式",
+      "var_water_body_id": "水域",
+      "var_watertype_id": "水質",
+      "var_current_id": "水流",
+      "var_surface_id": "水面"
+    },
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",
     "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m} 公尺",
     "qrAlt": "SSI 的 QR Code",
-    "scanHint": "請用 SSI App 掃描。內容：{payload}"
+    "scanHint": "請用 SSI App 掃描。內容：{payload}",
+    "ssiOptions": {
+      "custom": "其他",
+      "var_entry_id": {
+        "shore": "岸潛",
+        "boat": "船潛"
+      },
+      "var_water_body_id": {
+        "ocean": "海洋"
+      },
+      "var_watertype_id": {
+        "fresh": "淡水",
+        "salt": "海水"
+      },
+      "var_current_id": {
+        "no": "無",
+        "light": "小",
+        "strong": "中",
+        "ripping": "大"
+      },
+      "var_surface_id": {
+        "calm": "平靜",
+        "moving": "稍有起伏",
+        "stormy": "海況很差"
+      },
+      "var_weather_id": {
+        "cloudless": "晴天",
+        "cloudy": "多雲",
+        "rainy": "雨天",
+        "snow": "雪"
+      }
+    }
   }
 }
 
