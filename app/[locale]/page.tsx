@@ -64,6 +64,7 @@ type Dive = {
   divetime: number;
   depth_m: number;
   avg_depth_m?: number;
+  nitrox_pct?: number;
   watertemp_c?: number;
   watertemp_max_c?: number;
   airtemp_c?: number;
@@ -158,6 +159,11 @@ export default function Home() {
 
   function qrFieldLabel(key: string): string {
     return qrFieldLabelMap[key] ?? fallbackQrLabel(key);
+  }
+
+  function formatNitroxDisplay(value: number): string {
+    if (value === 21) return `${value} (${t("diveTable.values.air")})`;
+    return String(value);
   }
 
   function qrFieldValue(key: string, value: string): string {
@@ -398,12 +404,15 @@ export default function Home() {
                 {/*</div>*/}
               </div>
               <div className="mt-4">
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+                <p className="mt-2 text-sm text-slate-900 dark:text-slate-50">
+                  {t("diveTable.desc")}
+                </p>
+                <p className="mt-2 text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400">
                   {t("diveTable.label")}
                 </p>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  {t("diveTable.excludedLabel")}
-                </p>
+                {/*<p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">*/}
+                {/*  {t("diveTable.excludedLabel")}*/}
+                {/*</p>*/}
                 <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
                   <table className="w-full text-sm">
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -413,6 +422,14 @@ export default function Home() {
                         </td>
                         <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
                           {result.dive.avg_depth_m ?? "—"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
+                          {t("diveTable.fields.nitrox_pct")}
+                        </td>
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
+                          {result.dive.nitrox_pct != null ? formatNitroxDisplay(result.dive.nitrox_pct) : "—"}
                         </td>
                       </tr>
                       <tr>

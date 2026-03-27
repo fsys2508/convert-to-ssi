@@ -23,11 +23,13 @@
     "uploadFailed": "Upload failed",
     "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m}m, ave {ave_depth}m",
     "diveTable": {
+      "desc": "Due to QR code limitation, here are some data that are useful while doing manual input",
       "label": "Dive details",
       "includedLabel": "Included in QR payload",
       "excludedLabel": "Not included in QR payload",
       "values": {
         "present": "Present",
+        "air": "Air",
         "dive_type": {
           "recreational": "Recreational"
         }
@@ -40,6 +42,7 @@
         "divetime": "Dive time (min)",
         "depth_m": "Max depth (m)",
         "avg_depth_m": "Avg depth (m)",
+        "nitrox_pct": "Nitrox O2 (%)",
         "var_weather_id": "Weather",
         "var_entry_id": "Entry",
         "var_water_body_id": "Water body",

@@ -23,11 +23,13 @@
     "uploadFailed": "上傳失敗",
     "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m}公尺, 平均 {depth_m}公尺",
     "diveTable": {
+      "desc": "由於技術限制，以下列出未納入QR Code, 但在手動輸入時有幫助的資料",
       "label": "潛水資訊",
       "includedLabel": "包含在 QR 內容中",
       "excludedLabel": "不包含在 QR 內容中",
       "values": {
         "present": "已包含",
+        "air": "空氣",
         "dive_type": {
           "recreational": "休閒潛水"
         }
@@ -40,6 +42,7 @@
         "divetime": "潛水時間（分鐘）",
         "depth_m": "最大深度（公尺）",
         "avg_depth_m": "平均深度（公尺）",
+        "nitrox_pct": "高氧 O2（%）",
         "var_weather_id": "天氣",
         "var_entry_id": "入水方式",
         "var_water_body_id": "水域",

@@ -33,6 +33,8 @@ export interface SsiData {
   watertemp_max_c?: number;
   /** Display-only: surface interval (seconds) */
   surface_interval_s?: number;
+  /** Display-only: Nitrox oxygen content (%) from dive gas */
+  nitrox_pct?: number;
 }
 
 export function decodeFitFile(arrayBuffer: ArrayBuffer): {
@@ -67,18 +69,8 @@ function toSsiDatetime(startTime: Date | number): string {
 
 function mapFitWaterTypeToSsi(value: unknown): number | undefined {
   if (value == null) return undefined;
-
-  if (typeof value === "number") {
-    if (value === 4 || value === 5) return value;
-    if (value === 0) return 4; // FIT enum: fresh
-    if (value === 1) return 5; // FIT enum: salt
-    return undefined;
-  }
-
   if (typeof value === "string") {
     const s = value.trim().toLowerCase();
-    if (s === "0") return 4;
-    if (s === "1") return 5;
     if (s.includes("fresh")) return 4;
     if (s.includes("salt") || s.includes("sea")) return 5;
   }
@@ -91,6 +83,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const lapMsgs = fitData.lapMesgs as Record<string, unknown>[] | undefined;
   const diveSummaryMsgs = fitData.diveSummaryMesgs as Record<string, unknown>[] | undefined;
   const diveSettingsMsgs = fitData.diveSettingsMesgs as Record<string, unknown>[] | undefined;
+  const diveGasMsgs = fitData.diveGasMesgs as Record<string, unknown>[] | undefined;
   const recordMsgs = fitData.recordMesgs as Record<string, unknown>[] | undefined;
 
   const session = sessionMsgs?.[0];
@@ -102,6 +95,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const lap = lapMsgs?.[0];
   const diveSummary = diveSummaryMsgs?.[0];
   const diveSettings = diveSettingsMsgs?.[0];
+  const diveGas = diveGasMsgs?.[0];
 
   const bottomTimeSeconds = (diveSummary?.bottomTime as number | undefined) ?? undefined;
   const surfaceIntervalSeconds =
@@ -114,6 +108,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const var_watertype_id = mapFitWaterTypeToSsi(
     diveSettings?.waterType ?? session?.waterType ?? lap?.waterType ?? diveSummary?.waterType
   );
+  const nitrox_pct = diveGas?.oxygenContent;
 
   let maxDepthMeters = 0;
   let avgDepthMeters = 0;
@@ -179,6 +174,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     ...(watertemp_max_c != null && { watertemp_max_c }),
     ...(airtemp_c != null && { airtemp_c }),
     ...(surfaceIntervalSeconds != null && { surface_interval_s: surfaceIntervalSeconds }),
+    ...(nitrox_pct != null && { nitrox_pct }),
   };
 }
 
