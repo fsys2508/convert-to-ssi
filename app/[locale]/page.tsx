@@ -409,6 +409,14 @@ export default function Home() {
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                       <tr>
                         <td className="w-1/2 bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
+                          {t("diveTable.fields.avg_depth_m")}
+                        </td>
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
+                          {result.dive.avg_depth_m ?? "—"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
                           {t("diveTable.fields.surface_interval_min")}
                         </td>
                         <td className="px-3 py-2 text-slate-900 dark:text-slate-50">

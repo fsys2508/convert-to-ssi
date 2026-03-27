@@ -188,7 +188,7 @@ export function ssiDataToQrPayload(data: SsiData): string {
   if (data.dive) parts.push("dive");
   if (data.noid) parts.push("noid");
   const keys: (keyof SsiData)[] = [
-    "dive_type", "divetime", "datetime", "depth_m", "avg_depth_m",
+    "dive_type", "divetime", "datetime", "depth_m",
     "var_weather_id", "var_entry_id", "var_water_body_id", "var_watertype_id",
     "var_current_id", "var_surface_id",
     "watertemp_c", "airtemp_c", "vis_m", "watertemp_max_c",
