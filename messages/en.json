@@ -5,7 +5,33 @@
   },
   "Home": {
     "heading": "Garmin to SSI Converter",
-    "intro": "Upload one or multiple Garmin .fit dive logs to generate an SSI app QR code.",
+    "intro": "Upload Garmin .fit dive logs to generate an SSI app QR code.",
+    "guide": {
+      "link": "How to export .fit from Garmin Connect",
+      "title": "Export .fit from Garmin Connect",
+      "close": "Close",
+      "openGarmin": "Open Garmin Connect",
+      "steps": {
+        "step1": "Sign in to Garmin Connect on the web",
+        "step2": "Go to 'Diving' tab on the left",
+        "step3": "Click 'View Details' on the dive you want to export",
+        "step4": "Click the gear icon",
+        "step4_1": "(Top right if you are using desktop, above the graph if you are using mobile)",
+        "step5": "Click 'Export File'",
+        "step6": "A .fit file will be downloaded to your device"
+      }
+    },
+    "importGuide": {
+      "link": "How to import this QR in SSI app",
+      "title": "Import dive data in SSI app",
+      "close": "Close",
+      "steps": {
+        "step1": "Open the SSI app.",
+        "step2": "Click (+) → Add Dive → Scan Dive QR Code",
+        "step3": "Scan the QR code provided",
+        "step4": "New Dive page is opened with prefill data, manual fill in the rest"
+      }
+    },
     "ssiDefaultsTitle": "SSI defaults (optional)",
     "ssiDefaultsHint": "These IDs are SSI taxonomy values. Leave defaults unless you know you need different ones.",
     "ssiFieldLabels": {
@@ -26,7 +52,7 @@
     "upload": "Upload",
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
-    "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m}m, ave {ave_depth}m",
+    "privacyDisclaimer": "Disclaimer: This website does not store any uploaded files or processed dive data",
     "diveTable": {
       "desc": "Due to QR code limitation, here are some data that are useful while doing manual input",
       "label": "Dive details",

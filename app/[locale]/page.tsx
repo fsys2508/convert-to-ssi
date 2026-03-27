@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { GarminExportGuideDialog } from "@/components/garmin-export-guide-dialog";
+import { SsiImportGuideDialog } from "@/components/ssi-import-guide-dialog";
 
 function parseSsiDatetime(raw: string): Date | null {
   // raw in (YYYYMMDDHHmm)
@@ -124,6 +126,8 @@ export default function Home() {
   const locale = useLocale();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [showGuideDialog, setShowGuideDialog] = useState(false);
+  const [showImportGuideDialog, setShowImportGuideDialog] = useState(false);
 
   useEffect(() => setMounted(true), []);
   const isDark = useMemo(() => (mounted ? theme === "dark" : true), [mounted, theme]);
@@ -302,6 +306,22 @@ export default function Home() {
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               {t("intro")}
             </p>
+            <div className="mt-2 flex flex-col items-start gap-1">
+              <button
+                type="button"
+                onClick={() => setShowGuideDialog(true)}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                {t("guide.link")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowImportGuideDialog(true)}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                {t("importGuide.link")}
+              </button>
+            </div>
           </div>
 
         <section className="mt-8 space-y-6">
@@ -468,7 +488,18 @@ export default function Home() {
             </div>
           )}
         </section>
+        <p className="mt-10 text-end text-xs text-slate-500 dark:text-slate-400">
+          {t("privacyDisclaimer")}
+        </p>
       </div>
+      <GarminExportGuideDialog
+        open={showGuideDialog}
+        onClose={() => setShowGuideDialog(false)}
+      />
+      <SsiImportGuideDialog
+        open={showImportGuideDialog}
+        onClose={() => setShowImportGuideDialog(false)}
+      />
     </main>
   );
 }

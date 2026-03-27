@@ -1,11 +1,37 @@
 {
   "App": {
     "title": "Garmin 轉 SSI 轉換器",
-    "description": "將 Garmin .fit 潛水紀錄轉換為可供 SSI App 匯入的 QR Code。"
+    "description": "將 Garmin .fit 潛水紀錄轉換為可供 SSI App 匯入的 QR Code"
   },
   "Home": {
     "heading": "Garmin 轉 SSI 轉換器",
-    "intro": "上傳單一或多個 Garmin .fit 潛水紀錄，產生可供 SSI App 匯入的 QR Code。",
+    "intro": "上傳 Garmin .fit 潛水紀錄，產生可供 SSI App 匯入的 QR Code",
+    "guide": {
+      "link": "如何從 Garmin Connect 匯出 .fit 檔",
+      "title": "從 Garmin Connect 匯出 .fit 檔",
+      "close": "關閉",
+      "openGarmin": "開啟 Garmin Connect",
+      "steps": {
+        "step1": "先在網頁版 Garmin Connect 登入帳號",
+        "step2": "前往左側的 'Diving' 分頁",
+        "step3": "在想匯出的潛水紀錄上點選 'View Details'",
+        "step4": "點擊齒輪圖示",
+        "step4_1": "(電腦版位於右上角, 手機版位於圖表上方)",
+        "step5": "點選 'Export File'",
+        "step6": ".fit 檔案會下載到你的裝置"
+      }
+    },
+    "importGuide": {
+      "link": "如何在 SSI App 匯入此 QR Code",
+      "title": "在 SSI App 匯入潛水資料",
+      "close": "關閉",
+      "steps": {
+        "step1": "開啟 SSI App",
+        "step2": "點選（+）→ 新增潛水 → 掃描潛水資料QR Code",
+        "step3": "掃描本頁提供的 QR Code",
+        "step4": "進入新潛水頁面, 並自動帶入資料, 其餘欄位可手動補齊"
+      }
+    },
     "ssiDefaultsTitle": "SSI 預設值（可選）",
     "ssiDefaultsHint": "這些 ID 是 SSI 的分類值。除非你確定需要修改，否則建議維持預設。",
     "ssiFieldLabels": {
@@ -26,7 +52,7 @@
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",
-    "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m}公尺, 平均 {depth_m}公尺",
+    "privacyDisclaimer": "免責聲明：本網站不會儲存任何上傳檔案或處理後的潛水資料",
     "diveTable": {
       "desc": "由於技術限制，以下列出未納入QR Code, 但在手動輸入時有幫助的資料",
       "label": "潛水資訊",
