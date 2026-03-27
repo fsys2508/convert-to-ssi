@@ -11,6 +11,7 @@
   "dependencies": {
     "@garmin/fitsdk": "^21.195.0",
     "@heroicons/react": "^2.2.0",
+    "@vercel/analytics": "^2.0.1",
     "formidable": "^3.5.4",
     "next": "^14.2.0",
     "next-intl": "^4.8.3",

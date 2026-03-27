@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { GarminExportGuideDialog } from "@/components/garmin-export-guide-dialog";
 import { SsiImportGuideDialog } from "@/components/ssi-import-guide-dialog";
+import { track } from "@vercel/analytics";
 
 function parseSsiDatetime(raw: string): Date | null {
   // raw in (YYYYMMDDHHmm)
@@ -251,6 +252,7 @@ export default function Home() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file) return;
+    track("upload_submit_clicked");
     setLoading(true);
     setError(null);
     setResult(null);
@@ -269,7 +271,9 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? t("uploadFailed"));
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
+      track("upload_submit_success");
     } catch (err) {
+      track("upload_submit_failed");
       setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setLoading(false);
@@ -309,14 +313,20 @@ export default function Home() {
             <div className="mt-2 flex flex-col items-start gap-1">
               <button
                 type="button"
-                onClick={() => setShowGuideDialog(true)}
+                onClick={() => {
+                  track("guide_export_opened");
+                  setShowGuideDialog(true);
+                }}
                 className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
               >
                 {t("guide.link")}
               </button>
               <button
                 type="button"
-                onClick={() => setShowImportGuideDialog(true)}
+                onClick={() => {
+                  track("guide_import_opened");
+                  setShowImportGuideDialog(true);
+                }}
                 className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
               >
                 {t("importGuide.link")}
@@ -378,7 +388,10 @@ export default function Home() {
             className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <label className="inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200 dark:hover:bg-slate-950/50">
+              <label
+                className="inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200 dark:hover:bg-slate-950/50"
+                onClick={() => track("upload_picker_clicked")}
+              >
                 <span className="shrink-0 rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm dark:bg-slate-900 dark:text-slate-200">
                   .fit
                 </span>
@@ -389,7 +402,11 @@ export default function Home() {
                   className="hidden"
                   type="file"
                   accept=".fit"
-                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                  onChange={(e) => {
+                    const nextFile = e.target.files?.[0] ?? null;
+                    setFile(nextFile);
+                    if (nextFile) track("upload_file_selected");
+                  }}
                   disabled={loading}
                 />
               </label>
