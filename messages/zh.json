@@ -16,6 +16,8 @@
       "var_current_id": "水流",
       "var_surface_id": "水面"
     },
+    "filePlaceholder": "選擇 .fit 檔案…",
+    "scanTitle": "掃描",
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",

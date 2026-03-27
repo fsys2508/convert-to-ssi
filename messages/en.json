@@ -16,6 +16,8 @@
       "var_current_id": "Current",
       "var_surface_id": "Surface"
     },
+    "filePlaceholder": "Choose a .fit file…",
+    "scanTitle": "Scan",
     "upload": "Upload",
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
