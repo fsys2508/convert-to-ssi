@@ -108,7 +108,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const var_watertype_id = mapFitWaterTypeToSsi(
     diveSettings?.waterType ?? session?.waterType ?? lap?.waterType ?? diveSummary?.waterType
   );
-  const nitrox_pct = diveGas?.oxygenContent;
+  const nitrox_pct = Number(diveGas?.oxygenContent);
 
   let maxDepthMeters = 0;
   let avgDepthMeters = 0;
