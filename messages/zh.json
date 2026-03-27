@@ -1,11 +1,11 @@
 {
   "App": {
-    "title": "轉換為 SSI",
-    "description": "上傳潛水紀錄檔（例如 Garmin 的 .fit）以產生可供 SSI App 掃描的 QR Code。"
+    "title": "Garmin 轉 SSI 轉換器",
+    "description": "將 Garmin .fit 潛水紀錄轉換為可供 SSI App 匯入的 QR Code。"
   },
   "Home": {
-    "heading": "轉換為 SSI",
-    "intro": "上傳潛水紀錄檔（例如 Garmin 的 .fit）以產生可供 SSI App 掃描的 QR Code。",
+    "heading": "Garmin 轉 SSI 轉換器",
+    "intro": "上傳單一或多個 Garmin .fit 潛水紀錄，產生可供 SSI App 匯入的 QR Code。",
     "ssiDefaultsTitle": "SSI 預設值（可選）",
     "ssiDefaultsHint": "這些 ID 是 SSI 的分類值。除非你確定需要修改，否則建議維持預設。",
     "ssiFieldLabels": {
@@ -17,6 +17,11 @@
       "var_surface_id": "水面"
     },
     "filePlaceholder": "選擇 .fit 檔案…",
+    "uploadTabs": {
+      "single": "單一上傳",
+      "merge": "合併多筆紀錄",
+      "multiSelected": "已選擇 {count} 個 .fit 檔案"
+    },
     "scanTitle": "掃描",
     "upload": "上傳",
     "processing": "處理中…",

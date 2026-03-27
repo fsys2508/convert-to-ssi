@@ -1,11 +1,11 @@
 {
   "App": {
-    "title": "Convert to SSI",
-    "description": "Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app."
+    "title": "Garmin to SSI Converter",
+    "description": "Convert Garmin .fit dive logs into an SSI-ready QR code for easy import."
   },
   "Home": {
-    "heading": "Convert to SSI",
-    "intro": "Upload a dive log file (e.g. .fit from Garmin) to generate a QR code for the SSI app.",
+    "heading": "Garmin to SSI Converter",
+    "intro": "Upload one or multiple Garmin .fit dive logs to generate an SSI app QR code.",
     "ssiDefaultsTitle": "SSI defaults (optional)",
     "ssiDefaultsHint": "These IDs are SSI taxonomy values. Leave defaults unless you know you need different ones.",
     "ssiFieldLabels": {
@@ -17,6 +17,11 @@
       "var_surface_id": "Surface"
     },
     "filePlaceholder": "Choose a .fit file…",
+    "uploadTabs": {
+      "single": "Single upload",
+      "merge": "Merge multiple logs",
+      "multiSelected": "{count} .fit files selected"
+    },
     "scanTitle": "Scan",
     "upload": "Upload",
     "processing": "Processing…",

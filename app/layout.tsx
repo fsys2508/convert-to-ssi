@@ -3,8 +3,21 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Convert to SSI",
-  description: "Import dive logs from your device and upload to SSI app via QR code",
+  title: "Garmin to SSI Converter",
+  description:
+    "Convert Garmin .fit dive logs to SSI-ready QR code payloads. Upload one or multiple logs and generate data for SSI app import.",
+  keywords: [
+    "garmin to ssi",
+    "garmin ssi converter",
+    "garmin fit to ssi",
+    "ssi dive log qr",
+    "fit file to ssi",
+    "dive log converter",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
