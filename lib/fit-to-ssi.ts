@@ -31,24 +31,9 @@ export interface SsiData {
   /** Visibility meters */
   vis_m?: number;
   watertemp_max_c?: number;
+  /** Display-only: surface interval (seconds) */
+  surface_interval_s?: number;
 }
-
-export const DEFAULT_SSI_VARS: Pick<
-  SsiData,
-  | "var_weather_id"
-  | "var_entry_id"
-  | "var_water_body_id"
-  | "var_watertype_id"
-  | "var_current_id"
-  | "var_surface_id"
-> = {
-  var_weather_id: 1, // Cloudless
-  var_entry_id: 22, // Boat Dive
-  var_water_body_id: 13, // Ocean
-  var_watertype_id: 5, // Salt Water
-  var_current_id: 7, // Light Current
-  var_surface_id: 10, // Calm
-};
 
 export function decodeFitFile(arrayBuffer: ArrayBuffer): {
   fitData: Record<string, unknown[]>;
@@ -92,17 +77,23 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const startTime = session.startTime as Date | number | undefined;
   if (startTime == null) return null;
 
-  const totalElapsedSeconds = (session.totalElapsedTime as number) ?? (session.totalTimerTime as number) ?? 0;
-  const divetime = Math.round((totalElapsedSeconds / 60) * 10) / 10; // one decimal like SSI sample
+  const lap = lapMsgs?.[0];
+  const diveSummary = diveSummaryMsgs?.[0];
+
+  const bottomTimeSeconds = (diveSummary?.bottomTime as number | undefined) ?? undefined;
+  const surfaceIntervalSeconds =
+    (diveSummary?.surfaceInterval as number | undefined) ??
+    (diveSummary?.surfaceIntervalTime as number | undefined) ??
+    undefined;
+  const totalTimerSeconds = (session.totalTimerTime as number) ?? (session.totalElapsedTime as number) ?? 0;
+  const divetimeSeconds = bottomTimeSeconds ?? totalTimerSeconds;
+  const divetime = Math.round((divetimeSeconds / 60) * 10) / 10; // one decimal like SSI sample
 
   let maxDepthMeters = 0;
   let avgDepthMeters = 0;
   let watertemp_c: number | undefined;
   let watertemp_max_c: number | undefined;
   let airtemp_c: number | undefined;
-
-  const lap = lapMsgs?.[0];
-  const diveSummary = diveSummaryMsgs?.[0];
 
   // Max depth from lap/dive summary if available
   if (lap?.maxDepth != null) maxDepthMeters = lap.maxDepth as number;
@@ -157,10 +148,10 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     datetime: toSsiDatetime(startTime),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
     avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
-    ...DEFAULT_SSI_VARS,
     ...(watertemp_c != null && { watertemp_c }),
     ...(watertemp_max_c != null && { watertemp_max_c }),
     ...(airtemp_c != null && { airtemp_c }),
+    ...(surfaceIntervalSeconds != null && { surface_interval_s: surfaceIntervalSeconds }),
   };
 }
 

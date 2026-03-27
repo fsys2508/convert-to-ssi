@@ -21,10 +21,24 @@
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",
-    "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m} 公尺",
+    "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m}公尺, 平均 {depth_m}公尺",
+    "diveTable": {
+      "label": "潛水資訊",
+      "fields": {
+        "datetime": "開始",
+        "divetime": "潛水時間（分鐘）",
+        "depth_m": "最大深度（公尺）",
+        "avg_depth_m": "平均深度（公尺）",
+        "watertemp_c": "水溫（°C）",
+        "watertemp_max_c": "最高水溫（°C）",
+        "airtemp_c": "氣溫（°C）",
+        "surface_interval_min": "水面休息（分鐘）"
+      }
+    },
     "qrAlt": "SSI 的 QR Code",
     "scanHint": "請用 SSI App 掃描。內容：{payload}",
     "ssiOptions": {
+      "empty": "留空",
       "custom": "其他",
       "var_entry_id": {
         "shore": "岸潛",

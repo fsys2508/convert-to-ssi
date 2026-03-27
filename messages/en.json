@@ -21,10 +21,24 @@
     "upload": "Upload",
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
-    "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m} m",
+    "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m}m, ave {ave_depth}m",
+    "diveTable": {
+      "label": "Dive details",
+      "fields": {
+        "datetime": "Start",
+        "divetime": "Dive time (min)",
+        "depth_m": "Max depth (m)",
+        "avg_depth_m": "Avg depth (m)",
+        "watertemp_c": "Water temp (°C)",
+        "watertemp_max_c": "Max water temp (°C)",
+        "airtemp_c": "Air temp (°C)",
+        "surface_interval_min": "Surface interval (min)"
+      }
+    },
     "qrAlt": "QR code for SSI",
     "scanHint": "Scan with SSI app. Payload: {payload}",
     "ssiOptions": {
+      "empty": "Empty",
       "custom": "Others",
       "var_entry_id": {
         "shore": "Shore/Beach",

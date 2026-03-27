@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
 import {
   decodeFitFile,
-  DEFAULT_SSI_VARS,
   fitDataToSsiData,
   ssiDataToQrPayload,
 } from "@/lib/fit-to-ssi";
@@ -12,8 +11,13 @@ function parseOptionalNumber(v: FormDataEntryValue | null): number | undefined {
   if (typeof v !== "string") return undefined;
   const trimmed = v.trim();
   if (trimmed.length === 0) return undefined;
+  if (trimmed === "empty") return undefined;
   const n = Number(trimmed);
   return Number.isFinite(n) ? n : undefined;
+}
+
+function isExplicitEmpty(v: FormDataEntryValue | null): boolean {
+  return typeof v === "string" && v.trim() === "empty";
 }
 
 /**
@@ -62,7 +66,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Allow UI overrides for SSI taxonomy vars (fallback to defaults)
+    // Allow UI overrides for SSI taxonomy vars (no forced defaults)
+    const empty = {
+      var_weather_id: isExplicitEmpty(formData.get("var_weather_id")),
+      var_entry_id: isExplicitEmpty(formData.get("var_entry_id")),
+      var_water_body_id: isExplicitEmpty(formData.get("var_water_body_id")),
+      var_watertype_id: isExplicitEmpty(formData.get("var_watertype_id")),
+      var_current_id: isExplicitEmpty(formData.get("var_current_id")),
+      var_surface_id: isExplicitEmpty(formData.get("var_surface_id")),
+    } as const;
+
     const overrides = {
       var_weather_id: parseOptionalNumber(formData.get("var_weather_id")),
       var_entry_id: parseOptionalNumber(formData.get("var_entry_id")),
@@ -72,13 +85,14 @@ export async function POST(request: NextRequest) {
       var_surface_id: parseOptionalNumber(formData.get("var_surface_id")),
     } as const;
 
-    dive.var_weather_id = overrides.var_weather_id ?? dive.var_weather_id ?? DEFAULT_SSI_VARS.var_weather_id;
-    dive.var_entry_id = overrides.var_entry_id ?? dive.var_entry_id ?? DEFAULT_SSI_VARS.var_entry_id;
-    dive.var_water_body_id =
-      overrides.var_water_body_id ?? dive.var_water_body_id ?? DEFAULT_SSI_VARS.var_water_body_id;
-    dive.var_watertype_id = overrides.var_watertype_id ?? dive.var_watertype_id ?? DEFAULT_SSI_VARS.var_watertype_id;
-    dive.var_current_id = overrides.var_current_id ?? dive.var_current_id ?? DEFAULT_SSI_VARS.var_current_id;
-    dive.var_surface_id = overrides.var_surface_id ?? dive.var_surface_id ?? DEFAULT_SSI_VARS.var_surface_id;
+    dive.var_weather_id = empty.var_weather_id ? undefined : overrides.var_weather_id ?? dive.var_weather_id;
+    dive.var_entry_id = empty.var_entry_id ? undefined : overrides.var_entry_id ?? dive.var_entry_id;
+    dive.var_water_body_id = empty.var_water_body_id
+      ? undefined
+      : overrides.var_water_body_id ?? dive.var_water_body_id;
+    dive.var_watertype_id = empty.var_watertype_id ? undefined : overrides.var_watertype_id ?? dive.var_watertype_id;
+    dive.var_current_id = empty.var_current_id ? undefined : overrides.var_current_id ?? dive.var_current_id;
+    dive.var_surface_id = empty.var_surface_id ? undefined : overrides.var_surface_id ?? dive.var_surface_id;
 
     const qrPayload = ssiDataToQrPayload(dive);
     const qrDataUrl = await QRCode.toDataURL(qrPayload, {
