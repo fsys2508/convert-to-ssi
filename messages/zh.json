@@ -24,12 +24,30 @@
     "diveLine": "潛水：{datetime} — {divetime} 分鐘，最大 {depth_m}公尺, 平均 {depth_m}公尺",
     "diveTable": {
       "label": "潛水資訊",
+      "includedLabel": "包含在 QR 內容中",
+      "excludedLabel": "不包含在 QR 內容中",
+      "values": {
+        "present": "已包含",
+        "dive_type": {
+          "recreational": "休閒潛水"
+        }
+      },
       "fields": {
+        "dive": "潛水標記",
+        "noid": "無 ID 標記",
+        "dive_type": "潛水類型",
         "datetime": "開始",
         "divetime": "潛水時間（分鐘）",
         "depth_m": "最大深度（公尺）",
         "avg_depth_m": "平均深度（公尺）",
+        "var_weather_id": "天氣",
+        "var_entry_id": "入水方式",
+        "var_water_body_id": "水域",
+        "var_watertype_id": "水質",
+        "var_current_id": "水流",
+        "var_surface_id": "水面",
         "watertemp_c": "水溫（°C）",
+        "vis_m": "能見度（公尺）",
         "watertemp_max_c": "最高水溫（°C）",
         "airtemp_c": "氣溫（°C）",
         "surface_interval_min": "水面休息（分鐘）"

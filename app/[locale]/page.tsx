@@ -31,11 +31,29 @@ function formatSsiDatetimeForDisplay(raw: string): string {
   return parsed ? formatYmdHm(parsed) : raw;
 }
 
+function parseQrPayloadRows(payload: string): Array<{ key: string; value: string }> {
+  if (!payload) return [];
+  return payload
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const i = part.indexOf(":");
+      if (i < 0) return { key: part, value: "true" };
+      return { key: part.slice(0, i), value: part.slice(i + 1) };
+    });
+}
+
+function fallbackQrLabel(key: string): string {
+  return key
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+}
+
 type VarField =
   | "var_weather_id"
   | "var_entry_id"
   | "var_water_body_id"
-  | "var_watertype_id"
   | "var_current_id"
   | "var_surface_id";
 
@@ -59,7 +77,6 @@ const DEFAULT_VARS: Record<VarField, number> = {
   var_weather_id: 1,
   var_entry_id: 22,
   var_water_body_id: 13,
-  var_watertype_id: 5,
   var_current_id: 7,
   var_surface_id: 10,
 };
@@ -74,12 +91,6 @@ const VAR_OPTIONS: Record<VarField, SelectOption[]> = {
   var_water_body_id: [
     { value: "empty", labelKey: "ssiOptions.empty" },
     { value: "13", labelKey: "ssiOptions.var_water_body_id.ocean" },
-    { value: "custom", labelKey: "ssiOptions.custom" },
-  ],
-  var_watertype_id: [
-    { value: "empty", labelKey: "ssiOptions.empty" },
-    { value: "4", labelKey: "ssiOptions.var_watertype_id.fresh" },
-    { value: "5", labelKey: "ssiOptions.var_watertype_id.salt" },
     { value: "custom", labelKey: "ssiOptions.custom" },
   ],
   var_current_id: [
@@ -120,12 +131,95 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const qrRows = useMemo(() => parseQrPayloadRows(result?.qrPayload ?? ""), [result?.qrPayload]);
+
+  const qrFieldLabelMap = useMemo<Record<string, string>>(
+    () => ({
+      dive: t("diveTable.fields.dive"),
+      noid: t("diveTable.fields.noid"),
+      dive_type: t("diveTable.fields.dive_type"),
+      divetime: t("diveTable.fields.divetime"),
+      datetime: t("diveTable.fields.datetime"),
+      depth_m: t("diveTable.fields.depth_m"),
+      avg_depth_m: t("diveTable.fields.avg_depth_m"),
+      var_weather_id: t("diveTable.fields.var_weather_id"),
+      var_entry_id: t("diveTable.fields.var_entry_id"),
+      var_water_body_id: t("diveTable.fields.var_water_body_id"),
+      var_watertype_id: t("diveTable.fields.var_watertype_id"),
+      var_current_id: t("diveTable.fields.var_current_id"),
+      var_surface_id: t("diveTable.fields.var_surface_id"),
+      watertemp_c: t("diveTable.fields.watertemp_c"),
+      airtemp_c: t("diveTable.fields.airtemp_c"),
+      vis_m: t("diveTable.fields.vis_m"),
+      watertemp_max_c: t("diveTable.fields.watertemp_max_c"),
+    }),
+    [t]
+  );
+
+  function qrFieldLabel(key: string): string {
+    return qrFieldLabelMap[key] ?? fallbackQrLabel(key);
+  }
+
+  function qrFieldValue(key: string, value: string): string {
+    if (key === "datetime") return formatSsiDatetimeForDisplay(value);
+    if (key === "dive" || key === "noid") return t("diveTable.values.present");
+    if (key === "dive_type") {
+      if (value === "0") return t("diveTable.values.dive_type.recreational");
+      return value;
+    }
+    if (key === "var_weather_id") {
+      const m: Record<string, string> = {
+        "1": t("ssiOptions.var_weather_id.cloudless"),
+        "2": t("ssiOptions.var_weather_id.cloudy"),
+        "3": t("ssiOptions.var_weather_id.rainy"),
+        "4": t("ssiOptions.var_weather_id.snow"),
+      };
+      return m[value] ?? value;
+    }
+    if (key === "var_entry_id") {
+      const m: Record<string, string> = {
+        "21": t("ssiOptions.var_entry_id.shore"),
+        "22": t("ssiOptions.var_entry_id.boat"),
+      };
+      return m[value] ?? value;
+    }
+    if (key === "var_water_body_id") {
+      const m: Record<string, string> = {
+        "13": t("ssiOptions.var_water_body_id.ocean"),
+      };
+      return m[value] ?? value;
+    }
+    if (key === "var_watertype_id") {
+      const m: Record<string, string> = {
+        "4": t("ssiOptions.var_watertype_id.fresh"),
+        "5": t("ssiOptions.var_watertype_id.salt"),
+      };
+      return m[value] ?? value;
+    }
+    if (key === "var_current_id") {
+      const m: Record<string, string> = {
+        "6": t("ssiOptions.var_current_id.no"),
+        "7": t("ssiOptions.var_current_id.light"),
+        "8": t("ssiOptions.var_current_id.strong"),
+        "9": t("ssiOptions.var_current_id.ripping"),
+      };
+      return m[value] ?? value;
+    }
+    if (key === "var_surface_id") {
+      const m: Record<string, string> = {
+        "10": t("ssiOptions.var_surface_id.calm"),
+        "11": t("ssiOptions.var_surface_id.moving"),
+        "12": t("ssiOptions.var_surface_id.stormy"),
+      };
+      return m[value] ?? value;
+    }
+    return value;
+  }
 
   const [varMode, setVarMode] = useState<Record<VarField, string>>({
     var_weather_id: String(DEFAULT_VARS.var_weather_id),
     var_entry_id: String(DEFAULT_VARS.var_entry_id),
     var_water_body_id: String(DEFAULT_VARS.var_water_body_id),
-    var_watertype_id: String(DEFAULT_VARS.var_watertype_id),
     var_current_id: String(DEFAULT_VARS.var_current_id),
     var_surface_id: String(DEFAULT_VARS.var_surface_id),
   });
@@ -134,7 +228,6 @@ export default function Home() {
     var_weather_id: String(DEFAULT_VARS.var_weather_id),
     var_entry_id: String(DEFAULT_VARS.var_entry_id),
     var_water_body_id: String(DEFAULT_VARS.var_water_body_id),
-    var_watertype_id: String(DEFAULT_VARS.var_watertype_id),
     var_current_id: String(DEFAULT_VARS.var_current_id),
     var_surface_id: String(DEFAULT_VARS.var_surface_id),
   });
@@ -308,67 +401,14 @@ export default function Home() {
                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                   {t("diveTable.label")}
                 </p>
-                <div className="mt-2 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {t("diveTable.excludedLabel")}
+                </p>
+                <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
                   <table className="w-full text-sm">
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                       <tr>
                         <td className="w-1/2 bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.datetime")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {formatSsiDatetimeForDisplay(result.dive.datetime)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.divetime")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.divetime}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.depth_m")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.depth_m}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.avg_depth_m")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.avg_depth_m ?? "—"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.watertemp_c")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.watertemp_c ?? "—"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.watertemp_max_c")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.watertemp_max_c ?? "—"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
-                          {t("diveTable.fields.airtemp_c")}
-                        </td>
-                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
-                          {result.dive.airtemp_c ?? "—"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
                           {t("diveTable.fields.surface_interval_min")}
                         </td>
                         <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
@@ -377,6 +417,25 @@ export default function Home() {
                             : "—"}
                         </td>
                       </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {t("diveTable.includedLabel")}
+                </p>
+                <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
+                  <table className="w-full text-sm">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                      {qrRows.map((row) => (
+                        <tr key={`${row.key}:${row.value}`}>
+                          <td className="w-1/2 bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
+                            {qrFieldLabel(row.key)}
+                          </td>
+                          <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
+                            {qrFieldValue(row.key, row.value)}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

@@ -65,10 +65,32 @@ function toSsiDatetime(startTime: Date | number): string {
   return `${y}${m}${day}${h}${min}`;
 }
 
+function mapFitWaterTypeToSsi(value: unknown): number | undefined {
+  if (value == null) return undefined;
+
+  if (typeof value === "number") {
+    if (value === 4 || value === 5) return value;
+    if (value === 0) return 4; // FIT enum: fresh
+    if (value === 1) return 5; // FIT enum: salt
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    const s = value.trim().toLowerCase();
+    if (s === "0") return 4;
+    if (s === "1") return 5;
+    if (s.includes("fresh")) return 4;
+    if (s.includes("salt") || s.includes("sea")) return 5;
+  }
+
+  return undefined;
+}
+
 export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | null {
   const sessionMsgs = fitData.sessionMesgs as Record<string, unknown>[] | undefined;
   const lapMsgs = fitData.lapMesgs as Record<string, unknown>[] | undefined;
   const diveSummaryMsgs = fitData.diveSummaryMesgs as Record<string, unknown>[] | undefined;
+  const diveSettingsMsgs = fitData.diveSettingsMesgs as Record<string, unknown>[] | undefined;
   const recordMsgs = fitData.recordMesgs as Record<string, unknown>[] | undefined;
 
   const session = sessionMsgs?.[0];
@@ -79,6 +101,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
 
   const lap = lapMsgs?.[0];
   const diveSummary = diveSummaryMsgs?.[0];
+  const diveSettings = diveSettingsMsgs?.[0];
 
   const bottomTimeSeconds = (diveSummary?.bottomTime as number | undefined) ?? undefined;
   const surfaceIntervalSeconds =
@@ -88,6 +111,9 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const totalTimerSeconds = (session.totalTimerTime as number) ?? (session.totalElapsedTime as number) ?? 0;
   const divetimeSeconds = bottomTimeSeconds ?? totalTimerSeconds;
   const divetime = Math.round((divetimeSeconds / 60) * 10) / 10; // one decimal like SSI sample
+  const var_watertype_id = mapFitWaterTypeToSsi(
+    diveSettings?.waterType ?? session?.waterType ?? lap?.waterType ?? diveSummary?.waterType
+  );
 
   let maxDepthMeters = 0;
   let avgDepthMeters = 0;
@@ -148,6 +174,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     datetime: toSsiDatetime(startTime),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
     avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
+    ...(var_watertype_id != null && { var_watertype_id }),
     ...(watertemp_c != null && { watertemp_c }),
     ...(watertemp_max_c != null && { watertemp_max_c }),
     ...(airtemp_c != null && { airtemp_c }),

@@ -71,7 +71,6 @@ export async function POST(request: NextRequest) {
       var_weather_id: isExplicitEmpty(formData.get("var_weather_id")),
       var_entry_id: isExplicitEmpty(formData.get("var_entry_id")),
       var_water_body_id: isExplicitEmpty(formData.get("var_water_body_id")),
-      var_watertype_id: isExplicitEmpty(formData.get("var_watertype_id")),
       var_current_id: isExplicitEmpty(formData.get("var_current_id")),
       var_surface_id: isExplicitEmpty(formData.get("var_surface_id")),
     } as const;
@@ -80,7 +79,6 @@ export async function POST(request: NextRequest) {
       var_weather_id: parseOptionalNumber(formData.get("var_weather_id")),
       var_entry_id: parseOptionalNumber(formData.get("var_entry_id")),
       var_water_body_id: parseOptionalNumber(formData.get("var_water_body_id")),
-      var_watertype_id: parseOptionalNumber(formData.get("var_watertype_id")),
       var_current_id: parseOptionalNumber(formData.get("var_current_id")),
       var_surface_id: parseOptionalNumber(formData.get("var_surface_id")),
     } as const;
@@ -90,7 +88,6 @@ export async function POST(request: NextRequest) {
     dive.var_water_body_id = empty.var_water_body_id
       ? undefined
       : overrides.var_water_body_id ?? dive.var_water_body_id;
-    dive.var_watertype_id = empty.var_watertype_id ? undefined : overrides.var_watertype_id ?? dive.var_watertype_id;
     dive.var_current_id = empty.var_current_id ? undefined : overrides.var_current_id ?? dive.var_current_id;
     dive.var_surface_id = empty.var_surface_id ? undefined : overrides.var_surface_id ?? dive.var_surface_id;
 

@@ -24,12 +24,30 @@
     "diveLine": "Dive: {datetime} — {divetime} min, max {depth_m}m, ave {ave_depth}m",
     "diveTable": {
       "label": "Dive details",
+      "includedLabel": "Included in QR payload",
+      "excludedLabel": "Not included in QR payload",
+      "values": {
+        "present": "Present",
+        "dive_type": {
+          "recreational": "Recreational"
+        }
+      },
       "fields": {
+        "dive": "Dive marker",
+        "noid": "No-ID marker",
+        "dive_type": "Dive type",
         "datetime": "Start",
         "divetime": "Dive time (min)",
         "depth_m": "Max depth (m)",
         "avg_depth_m": "Avg depth (m)",
+        "var_weather_id": "Weather",
+        "var_entry_id": "Entry",
+        "var_water_body_id": "Water body",
+        "var_watertype_id": "Water type",
+        "var_current_id": "Current",
+        "var_surface_id": "Surface",
         "watertemp_c": "Water temp (°C)",
+        "vis_m": "Visibility (m)",
         "watertemp_max_c": "Max water temp (°C)",
         "airtemp_c": "Air temp (°C)",
         "surface_interval_min": "Surface interval (min)"
