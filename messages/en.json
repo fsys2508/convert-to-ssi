@@ -22,7 +22,7 @@
       }
     },
     "importGuide": {
-      "link": "How to import this QR in SSI app",
+      "link": "How to import QR Code in SSI app",
       "title": "Import dive data in SSI app",
       "close": "Close",
       "steps": {
