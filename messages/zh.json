@@ -6,6 +6,11 @@
   "Home": {
     "heading": "Garmin 轉 SSI 轉換器",
     "intro": "上傳 Garmin .fit 潛水紀錄，產生可供 SSI App 匯入的 QR Code",
+    "introPrefix": "上傳 Garmin",
+    "introFitTerm": ".fit 潛水紀錄",
+    "introMiddle": "後可得到用於 SSI App 匯入的",
+    "introQrTerm": "QR Code",
+    "introSuffix": "",
     "guide": {
       "link": "如何從 Garmin Connect 匯出 .fit 檔",
       "title": "從 Garmin Connect 匯出 .fit 檔",

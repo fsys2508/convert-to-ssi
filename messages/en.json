@@ -6,6 +6,11 @@
   "Home": {
     "heading": "Garmin to SSI Converter",
     "intro": "Upload Garmin .fit dive logs to generate an SSI app QR code.",
+    "introPrefix": "Upload Garmin",
+    "introFitTerm": ".fit dive logs",
+    "introMiddle": "to obtain a QR code",
+    "introQrTerm": "readable by the SSI app",
+    "introSuffix": "",
     "guide": {
       "link": "How to export .fit from Garmin Connect",
       "title": "Export .fit from Garmin Connect",

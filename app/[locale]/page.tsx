@@ -308,30 +308,40 @@ export default function Home() {
               {t("heading")}
             </h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              {t("intro")}
+              {t("introPrefix")}{" "}
+              <span className="inline-flex items-center gap-1">
+                {t("introFitTerm")}
+                <button
+                  type="button"
+                  onClick={() => {
+                    track("guide_export_opened");
+                    setShowGuideDialog(true);
+                  }}
+                  className="relative -top-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-slate-300 text-[9px] font-semibold leading-none text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  aria-label={t("guide.link")}
+                  title={t("guide.link")}
+                >
+                  ?
+                </button>
+              </span>{" "}
+              {t("introMiddle")}{" "}
+              <span className="inline-flex items-center gap-1">
+                {t("introQrTerm")}
+                <button
+                  type="button"
+                  onClick={() => {
+                    track("guide_import_opened");
+                    setShowImportGuideDialog(true);
+                  }}
+                  className="relative -top-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-slate-300 text-[9px] font-semibold leading-none text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  aria-label={t("importGuide.link")}
+                  title={t("importGuide.link")}
+                >
+                  ?
+                </button>
+              </span>
+              {t("introSuffix")}
             </p>
-            <div className="mt-2 flex flex-col items-start gap-1">
-              <button
-                type="button"
-                onClick={() => {
-                  track("guide_export_opened");
-                  setShowGuideDialog(true);
-                }}
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                {t("guide.link")}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  track("guide_import_opened");
-                  setShowImportGuideDialog(true);
-                }}
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                {t("importGuide.link")}
-              </button>
-            </div>
           </div>
 
         <section className="mt-8 space-y-6">
