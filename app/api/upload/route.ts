@@ -73,10 +73,9 @@ export async function POST(request: NextRequest) {
         );
       }
       const fitBuffer = await fitEntries[0].buffer();
-      arrayBuffer = fitBuffer.buffer.slice(
-        fitBuffer.byteOffset,
-        fitBuffer.byteOffset + fitBuffer.byteLength
-      );
+      const fitArrayBuffer = new ArrayBuffer(fitBuffer.byteLength);
+      new Uint8Array(fitArrayBuffer).set(fitBuffer);
+      arrayBuffer = fitArrayBuffer;
     }
 
     const { fitData, errors } = decodeFitFile(arrayBuffer);
