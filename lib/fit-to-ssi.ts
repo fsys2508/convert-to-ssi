@@ -1,4 +1,5 @@
 import { Decoder, Stream } from "@garmin/fitsdk";
+import { find } from "geo-tz/all";
 
 /**
  * SSI app QR payload structure (semicolon-separated key:value).
@@ -57,14 +58,62 @@ export function decodeFitFile(arrayBuffer: ArrayBuffer): {
 }
 
 /** Build SSI datetime string from session startTime: YYYYMMDDHHmm */
-function toSsiDatetime(startTime: Date | number): string {
+function toSsiDatetime(startTime: Date | number, timeZone?: string): string {
   const d = startTime instanceof Date ? startTime : new Date((startTime as number) * 1000);
+  if (timeZone) {
+    try {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).formatToParts(d);
+      const byType = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+      return `${byType.year}${byType.month}${byType.day}${byType.hour}${byType.minute}`;
+    } catch {
+      // Fall back to runtime-local timezone formatting.
+    }
+  }
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   const h = String(d.getHours()).padStart(2, "0");
   const min = String(d.getMinutes()).padStart(2, "0");
   return `${y}${m}${day}${h}${min}`;
+}
+
+function semicirclesToDegrees(v: number): number {
+  return v * (180 / 2147483648);
+}
+
+function inferTimeZoneFromSession(session: Record<string, unknown>): string | undefined {
+  const candidates: Array<{ lat: unknown; lon: unknown }> = [
+    { lat: session.endPositionLat, lon: session.endPositionLong },
+    { lat: session.necLat, lon: session.necLong },
+    { lat: session.swcLat, lon: session.swcLong },
+    { lat: session.startPositionLat, lon: session.startPositionLong },
+  ];
+
+  for (const c of candidates) {
+    if (typeof c.lat !== "number" || typeof c.lon !== "number") continue;
+    if (!Number.isFinite(c.lat) || !Number.isFinite(c.lon)) continue;
+    const lat = semicirclesToDegrees(c.lat);
+    const lon = semicirclesToDegrees(c.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    try {
+      const zones = find(lat, lon);
+      console.log('>>>>>>>>zones: ', zones);
+      if (Array.isArray(zones) && zones.length > 0 && typeof zones[0] === "string") {
+        return zones[0];
+      }
+    } catch(e) {
+      console.log('>>>>>>>>e: ', e);
+    }
+  }
+  return undefined;
 }
 
 function mapFitWaterTypeToSsi(value: unknown): number | undefined {
@@ -78,7 +127,10 @@ function mapFitWaterTypeToSsi(value: unknown): number | undefined {
   return undefined;
 }
 
-export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | null {
+export function fitDataToSsiData(
+  fitData: Record<string, unknown[]>,
+  options?: { fallbackTimeZone?: string }
+): SsiData | null {
   const sessionMsgs = fitData.sessionMesgs as Record<string, unknown>[] | undefined;
   const lapMsgs = fitData.lapMesgs as Record<string, unknown>[] | undefined;
   const diveSummaryMsgs = fitData.diveSummaryMesgs as Record<string, unknown>[] | undefined;
@@ -91,6 +143,8 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
 
   const startTime = session.startTime as Date | number | undefined;
   if (startTime == null) return null;
+  const derivedTimeZone = inferTimeZoneFromSession(session);
+  const effectiveTimeZone = derivedTimeZone ?? options?.fallbackTimeZone;
 
   const lap = lapMsgs?.[0];
   const diveSummary = diveSummaryMsgs?.[0];
@@ -108,7 +162,8 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
   const var_watertype_id = mapFitWaterTypeToSsi(
     diveSettings?.waterType ?? session?.waterType ?? lap?.waterType ?? diveSummary?.waterType
   );
-  const nitrox_pct = Number(diveGas?.oxygenContent);
+  const nitroxRaw = Number(diveGas?.oxygenContent);
+  const nitrox_pct = Number.isFinite(nitroxRaw) ? nitroxRaw : undefined;
 
   let maxDepthMeters = 0;
   let avgDepthMeters = 0;
@@ -166,7 +221,7 @@ export function fitDataToSsiData(fitData: Record<string, unknown[]>): SsiData | 
     noid: true,
     dive_type: 0,
     divetime,
-    datetime: toSsiDatetime(startTime),
+    datetime: toSsiDatetime(startTime, effectiveTimeZone),
     depth_m: Math.round(maxDepthMeters * 10) / 10,
     avg_depth_m: Math.round(avgDepthMeters * 10) / 10,
     ...(var_watertype_id != null && { var_watertype_id }),

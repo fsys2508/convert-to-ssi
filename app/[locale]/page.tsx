@@ -259,6 +259,10 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      const clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (clientTimeZone) {
+        formData.append("clientTimeZone", clientTimeZone);
+      }
       (Object.keys(DEFAULT_VARS) as VarField[]).forEach((k) => {
         const v = effectiveVarValue(k);
         if (v == null) return;

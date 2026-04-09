@@ -29,6 +29,11 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
+    const clientTimeZoneRaw = formData.get("clientTimeZone");
+    const clientTimeZone =
+      typeof clientTimeZoneRaw === "string" && clientTimeZoneRaw.trim().length > 0
+        ? clientTimeZoneRaw.trim()
+        : undefined;
 
     // Server-safe check: file-like object (no global File on Node)
     const isFileLike =
@@ -54,7 +59,7 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await fileObj.arrayBuffer();
 
     const { fitData, errors } = decodeFitFile(arrayBuffer);
-    const dive = fitDataToSsiData(fitData);
+    const dive = fitDataToSsiData(fitData, { fallbackTimeZone: clientTimeZone });
 
     if (!dive) {
       return NextResponse.json(
