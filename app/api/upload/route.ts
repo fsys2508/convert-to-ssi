@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
+import unzipper from "unzipper";
 import {
   decodeFitFile,
   fitDataToSsiData,
@@ -22,8 +23,8 @@ function isExplicitEmpty(v: FormDataEntryValue | null): boolean {
 
 /**
  * POST /api/upload
- * Accepts a .fit file (multipart/form-data), decodes it, maps to SSI attributes,
- * and returns SSI dive log + QR code data URL for the SSI app to scan.
+ * Accepts a .fit or .zip file (multipart/form-data), decodes a single FIT payload,
+ * maps to SSI attributes, and returns SSI dive log + QR code data URL.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -43,20 +44,40 @@ export async function POST(request: NextRequest) {
       "name" in file;
     if (!isFileLike) {
       return NextResponse.json(
-        { error: "Missing file. Send a .fit file as 'file' in form data." },
+        { error: "Missing file. Send a .fit or .zip file as 'file' in form data." },
         { status: 400 }
       );
     }
 
     const fileObj = file as { arrayBuffer(): Promise<ArrayBuffer>; name: string };
-    if (!fileObj.name.toLowerCase().endsWith(".fit")) {
+    const fileNameLower = fileObj.name.toLowerCase();
+    const isFit = fileNameLower.endsWith(".fit");
+    const isZip = fileNameLower.endsWith(".zip");
+    if (!isFit && !isZip) {
       return NextResponse.json(
-        { error: "File must be a .fit file." },
+        { error: "File must be a .fit or .zip file." },
         { status: 400 }
       );
     }
 
-    const arrayBuffer = await fileObj.arrayBuffer();
+    let arrayBuffer = await fileObj.arrayBuffer();
+    if (isZip) {
+      const zipDirectory = await unzipper.Open.buffer(Buffer.from(arrayBuffer));
+      const fitEntries = zipDirectory.files.filter(
+        (entry) => entry.type === "File" && entry.path.toLowerCase().endsWith(".fit")
+      );
+      if (fitEntries.length !== 1) {
+        return NextResponse.json(
+          { errorKey: "zipInvalid" },
+          { status: 400 }
+        );
+      }
+      const fitBuffer = await fitEntries[0].buffer();
+      arrayBuffer = fitBuffer.buffer.slice(
+        fitBuffer.byteOffset,
+        fitBuffer.byteOffset + fitBuffer.byteLength
+      );
+    }
 
     const { fitData, errors } = decodeFitFile(arrayBuffer);
     const dive = fitDataToSsiData(fitData, { fallbackTimeZone: clientTimeZone });

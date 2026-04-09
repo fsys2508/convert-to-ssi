@@ -47,16 +47,17 @@
       "var_current_id": "水流",
       "var_surface_id": "水面"
     },
-    "filePlaceholder": "選擇 .fit 檔案…",
+    "filePlaceholder": "選擇 .fit 或 .zip 檔案…",
     "uploadTabs": {
       "single": "單一上傳",
       "merge": "合併多筆紀錄",
-      "multiSelected": "已選擇 {count} 個 .fit 檔案"
+      "multiSelected": "已選擇 {count} 個 .fit/.zip 檔案"
     },
     "scanTitle": "掃描",
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",
+    "invalidZip": "ZIP 壓縮檔內只能有一個 .fit 檔案。",
     "privacyDisclaimer": "免責聲明：本網站不會儲存任何上傳檔案或處理後的潛水資料",
     "diveTable": {
       "desc": "由於技術限制，以下列出未納入QR Code, 但在手動輸入時有幫助的資料",

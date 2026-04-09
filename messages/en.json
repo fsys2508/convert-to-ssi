@@ -47,16 +47,17 @@
       "var_current_id": "Current",
       "var_surface_id": "Surface"
     },
-    "filePlaceholder": "Choose a .fit file…",
+    "filePlaceholder": "Choose a .fit or .zip file…",
     "uploadTabs": {
       "single": "Single upload",
       "merge": "Merge multiple logs",
-      "multiSelected": "{count} .fit files selected"
+      "multiSelected": "{count} .fit/.zip files selected"
     },
     "scanTitle": "Scan",
     "upload": "Upload",
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
+    "invalidZip": "ZIP must contain only one .fit file.",
     "privacyDisclaimer": "Disclaimer: This website does not store any uploaded files or processed dive data",
     "diveTable": {
       "desc": "Due to QR code limitation, here are some data that are useful while doing manual input",

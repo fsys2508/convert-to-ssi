@@ -273,7 +273,12 @@ export default function Home() {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? t("uploadFailed"));
+      if (!res.ok) {
+        const invalidZip = res.status === 400;
+        throw new Error(
+            invalidZip ? t("invalidZip") :  t("uploadFailed")
+        );
+      }
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
       track("upload_submit_success");
     } catch (err) {
@@ -407,7 +412,7 @@ export default function Home() {
                 onClick={() => track("upload_picker_clicked")}
               >
                 <span className="shrink-0 rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm dark:bg-slate-900 dark:text-slate-200">
-                  .fit
+                  .fit / .zip
                 </span>
                 <span className="min-w-0 flex-1 truncate">
                   {file ? file.name : t("filePlaceholder")}
@@ -415,7 +420,7 @@ export default function Home() {
                 <input
                   className="hidden"
                   type="file"
-                  accept=".fit"
+                  accept=".fit,.zip,application/zip"
                   onChange={(e) => {
                     const nextFile = e.target.files?.[0] ?? null;
                     setFile(nextFile);
