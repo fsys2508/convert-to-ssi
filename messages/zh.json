@@ -80,6 +80,8 @@
         "depth_m": "最大深度（公尺）",
         "avg_depth_m": "平均深度（公尺）",
         "nitrox_pct": "高氧 O2（%）",
+        "latitude": "緯度",
+        "longitude": "經度",
         "var_weather_id": "天氣",
         "var_entry_id": "入水方式",
         "var_water_body_id": "水域",

@@ -36,6 +36,10 @@ export interface SsiData {
   surface_interval_s?: number;
   /** Display-only: Nitrox oxygen content (%) from dive gas */
   nitrox_pct?: number;
+  /** Display-only: dive latitude in decimal degrees */
+  lat_deg?: number;
+  /** Display-only: dive longitude in decimal degrees */
+  lon_deg?: number;
 }
 
 export function decodeFitFile(arrayBuffer: ArrayBuffer): {
@@ -127,6 +131,26 @@ function mapFitWaterTypeToSsi(value: unknown): number | undefined {
   return undefined;
 }
 
+function inferDiveLatLon(session: Record<string, unknown>): { lat_deg: number; lon_deg: number } | undefined {
+  const candidates: Array<{ lat: unknown; lon: unknown }> = [
+    { lat: session.endPositionLat, lon: session.endPositionLong },
+    { lat: session.startPositionLat, lon: session.startPositionLong },
+  ];
+
+  for (const c of candidates) {
+    if (typeof c.lat !== "number" || typeof c.lon !== "number") continue;
+    if (!Number.isFinite(c.lat) || !Number.isFinite(c.lon)) continue;
+    const lat = semicirclesToDegrees(c.lat);
+    const lon = semicirclesToDegrees(c.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    return {
+      lat_deg: Math.round(lat * 1_000_000) / 1_000_000,
+      lon_deg: Math.round(lon * 1_000_000) / 1_000_000,
+    };
+  }
+  return undefined;
+}
+
 export function fitDataToSsiData(
   fitData: Record<string, unknown[]>,
   options?: { fallbackTimeZone?: string }
@@ -145,6 +169,7 @@ export function fitDataToSsiData(
   if (startTime == null) return null;
   const derivedTimeZone = inferTimeZoneFromSession(session);
   const effectiveTimeZone = derivedTimeZone ?? options?.fallbackTimeZone;
+  const diveLatLon = inferDiveLatLon(session);
 
   const lap = lapMsgs?.[0];
   const diveSummary = diveSummaryMsgs?.[0];
@@ -230,6 +255,7 @@ export function fitDataToSsiData(
     ...(airtemp_c != null && { airtemp_c }),
     ...(surfaceIntervalSeconds != null && { surface_interval_s: surfaceIntervalSeconds }),
     ...(nitrox_pct != null && { nitrox_pct }),
+    ...(diveLatLon ?? {}),
   };
 }
 

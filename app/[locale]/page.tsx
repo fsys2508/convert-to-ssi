@@ -53,6 +53,10 @@ function fallbackQrLabel(key: string): string {
     .replace(/\b\w/g, (ch) => ch.toUpperCase());
 }
 
+function formatCoordinate(value: number): string {
+  return value.toFixed(6);
+}
+
 type VarField =
   | "var_weather_id"
   | "var_entry_id"
@@ -68,6 +72,8 @@ type Dive = {
   depth_m: number;
   avg_depth_m?: number;
   nitrox_pct?: number;
+  lat_deg?: number;
+  lon_deg?: number;
   watertemp_c?: number;
   watertemp_max_c?: number;
   airtemp_c?: number;
@@ -486,6 +492,22 @@ export default function Home() {
                         </td>
                         <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
                           {result.dive.nitrox_pct != null ? formatNitroxDisplay(result.dive.nitrox_pct) : "—"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
+                          {t("diveTable.fields.latitude")}
+                        </td>
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
+                          {result.dive.lat_deg != null ? formatCoordinate(result.dive.lat_deg) : "—"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-slate-50 px-3 py-2 font-medium text-slate-700 dark:bg-slate-950/30 dark:text-slate-200">
+                          {t("diveTable.fields.longitude")}
+                        </td>
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-50">
+                          {result.dive.lon_deg != null ? formatCoordinate(result.dive.lon_deg) : "—"}
                         </td>
                       </tr>
                       <tr>

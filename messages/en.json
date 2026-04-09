@@ -80,6 +80,8 @@
         "depth_m": "Max depth (m)",
         "avg_depth_m": "Avg depth (m)",
         "nitrox_pct": "Nitrox O2 (%)",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
         "var_weather_id": "Weather",
         "var_entry_id": "Entry",
         "var_water_body_id": "Water body",
