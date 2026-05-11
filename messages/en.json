@@ -47,7 +47,7 @@
       "var_current_id": "Current",
       "var_surface_id": "Surface"
     },
-    "filePlaceholder": "Choose a .fit or .zip file…",
+    "filePlaceholder": "Upload a .fit or .zip file…",
     "uploadTabs": {
       "single": "Single upload",
       "merge": "Merge multiple logs",

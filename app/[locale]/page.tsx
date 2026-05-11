@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { MoonIcon, SunIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useDropzone } from "react-dropzone";
 import { GarminExportGuideDialog } from "@/components/garmin-export-guide-dialog";
 import { SsiImportGuideDialog } from "@/components/ssi-import-guide-dialog";
 import { track } from "@vercel/analytics";
@@ -249,6 +250,28 @@ export default function Home() {
     var_surface_id: String(DEFAULT_VARS.var_surface_id),
   });
 
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    multiple: false,
+    disabled: loading,
+    maxFiles: 1,
+    accept: {
+      "application/zip": [".zip"],
+      "application/x-zip-compressed": [".zip"],
+      "application/octet-stream": [".fit"],
+      "application/vnd.ant.fit": [".fit"],
+    },
+    onDropAccepted: (acceptedFiles) => {
+      const nextFile = acceptedFiles[0] ?? null;
+      setFile(nextFile);
+      setError(null);
+      if (nextFile) track("upload_file_selected");
+    },
+    onDropRejected: () => {
+      setFile(null);
+      setError(t("invalidZip"));
+    },
+  });
+
   function effectiveVarValue(field: VarField): string | null {
     const mode = varMode[field];
     if (mode === "empty") return null;
@@ -413,28 +436,43 @@ export default function Home() {
             className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <label
-                className="inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200 dark:hover:bg-slate-950/50"
-                onClick={() => track("upload_picker_clicked")}
+              <div
+                {...getRootProps({
+                  className: [
+                    "inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition",
+                    isDragReject
+                      ? "border-red-300 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200 dark:hover:bg-slate-950/50",
+                    loading ? "cursor-not-allowed opacity-60" : "",
+                  ].join(" "),
+                  onClick: () => track("upload_picker_clicked"),
+                })}
               >
                 <span className="shrink-0 rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm dark:bg-slate-900 dark:text-slate-200">
                   .fit / .zip
                 </span>
                 <span className="min-w-0 flex-1 truncate">
-                  {file ? file.name : t("filePlaceholder")}
+                  {isDragActive ? t("filePlaceholder") : file ? file.name : t("filePlaceholder")}
                 </span>
-                <input
-                  className="hidden"
-                  type="file"
-                  accept=".fit,.zip,application/zip"
-                  onChange={(e) => {
-                    const nextFile = e.target.files?.[0] ?? null;
-                    setFile(nextFile);
-                    if (nextFile) track("upload_file_selected");
-                  }}
-                  disabled={loading}
-                />
-              </label>
+                {file && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setFile(null);
+                      setError(null);
+                    }}
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    aria-label="Clear selected file"
+                    title="Clear selected file"
+                    disabled={loading}
+                  >
+                    <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
+                <input {...getInputProps()} />
+              </div>
 
               <button
                 type="submit"

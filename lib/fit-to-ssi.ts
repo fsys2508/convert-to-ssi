@@ -109,7 +109,6 @@ function inferTimeZoneFromSession(session: Record<string, unknown>): string | un
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
     try {
       const zones = find(lat, lon);
-      console.log('>>>>>>>>zones: ', zones);
       if (Array.isArray(zones) && zones.length > 0 && typeof zones[0] === "string") {
         return zones[0];
       }

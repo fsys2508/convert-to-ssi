@@ -47,7 +47,7 @@
       "var_current_id": "水流",
       "var_surface_id": "水面"
     },
-    "filePlaceholder": "選擇 .fit 或 .zip 檔案…",
+    "filePlaceholder": "上傳你的 .fit/.zip 檔案",
     "uploadTabs": {
       "single": "單一上傳",
       "merge": "合併多筆紀錄",
