@@ -144,6 +144,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [hiddenResult, setHiddenResult] = useState<Result | null>(null);
   const qrRows = useMemo(() => parseQrPayloadRows(result?.qrPayload ?? ""), [result?.qrPayload]);
 
   const qrFieldLabelMap = useMemo<Record<string, string>>(
@@ -250,6 +251,24 @@ export default function Home() {
     var_surface_id: String(DEFAULT_VARS.var_surface_id),
   });
 
+  function handleNewFileSelected(nextFile: File) {
+    setFile(nextFile);
+    setError(null);
+    if (result) {
+      setHiddenResult(result);
+      setResult(null);
+    }
+  }
+
+  function clearSelectedFile() {
+    setFile(null);
+    setError(null);
+    if (hiddenResult) {
+      setResult(hiddenResult);
+      setHiddenResult(null);
+    }
+  }
+
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     multiple: false,
     disabled: loading,
@@ -262,12 +281,11 @@ export default function Home() {
     },
     onDropAccepted: (acceptedFiles) => {
       const nextFile = acceptedFiles[0] ?? null;
-      setFile(nextFile);
-      setError(null);
-      if (nextFile) track("upload_file_selected");
+      if (!nextFile) return;
+      handleNewFileSelected(nextFile);
+      track("upload_file_selected");
     },
     onDropRejected: () => {
-      setFile(null);
       setError(t("invalidZip"));
     },
   });
@@ -309,6 +327,7 @@ export default function Home() {
         );
       }
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
+      setHiddenResult(null);
       track("upload_submit_success");
     } catch (err) {
       track("upload_submit_failed");
@@ -468,8 +487,7 @@ export default function Home() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setFile(null);
-                      setError(null);
+                      clearSelectedFile();
                     }}
                     className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                     aria-label="Clear selected file"
