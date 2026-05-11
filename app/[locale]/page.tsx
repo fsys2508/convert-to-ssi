@@ -439,9 +439,11 @@ export default function Home() {
               <div
                 {...getRootProps({
                   className: [
-                    "inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition",
+                    "inline-flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors duration-150",
                     isDragReject
                       ? "border-red-300 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300"
+                      : isDragActive
+                        ? "border-blue-400 bg-blue-50 text-blue-700 ring-2 ring-blue-200 dark:border-blue-500/70 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/50"
                       : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-950/30 dark:text-slate-200 dark:hover:bg-slate-950/50",
                     loading ? "cursor-not-allowed opacity-60" : "",
                   ].join(" "),
@@ -452,7 +454,13 @@ export default function Home() {
                   .fit / .zip
                 </span>
                 <span className="min-w-0 flex-1 truncate">
-                  {isDragActive ? t("filePlaceholder") : file ? file.name : t("filePlaceholder")}
+                  {isDragReject
+                    ? t("invalidZip")
+                    : isDragActive
+                      ? "Drop file here"
+                      : file
+                        ? file.name
+                        : t("filePlaceholder")}
                 </span>
                 {file && (
                   <button
@@ -463,7 +471,7 @@ export default function Home() {
                       setFile(null);
                       setError(null);
                     }}
-                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                     aria-label="Clear selected file"
                     title="Clear selected file"
                     disabled={loading}

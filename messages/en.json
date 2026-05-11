@@ -47,7 +47,7 @@
       "var_current_id": "Current",
       "var_surface_id": "Surface"
     },
-    "filePlaceholder": "Upload a .fit or .zip file…",
+    "filePlaceholder": "Upload your dive log file here",
     "uploadTabs": {
       "single": "Single upload",
       "merge": "Merge multiple logs",
