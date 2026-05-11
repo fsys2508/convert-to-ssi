@@ -91,6 +91,8 @@ const DEFAULT_VARS: Record<VarField, number> = {
   var_current_id: 7,
   var_surface_id: 10,
 };
+const CORNER_GIF_URL =
+  "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZ1ZHZydTllOG53N3JvOWVjYm92Z2o1d3owN3JscnVhMnM4dnVlcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o72FkreWNH9OlTtPq/giphy.gif";
 
 const VAR_OPTIONS: Record<VarField, SelectOption[]> = {
   var_entry_id: [
@@ -145,6 +147,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [hiddenResult, setHiddenResult] = useState<Result | null>(null);
+  const [hasEverUploaded, setHasEverUploaded] = useState(false);
   const qrRows = useMemo(() => parseQrPayloadRows(result?.qrPayload ?? ""), [result?.qrPayload]);
 
   const qrFieldLabelMap = useMemo<Record<string, string>>(
@@ -328,6 +331,7 @@ export default function Home() {
       }
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
       setHiddenResult(null);
+      setHasEverUploaded(true);
       track("upload_submit_success");
     } catch (err) {
       track("upload_submit_failed");
@@ -610,6 +614,20 @@ export default function Home() {
             </div>
           )}
         </section>
+        {!hasEverUploaded && (
+          <div className="mt-8 flex justify-center">
+            <div className="relative w-fit">
+              <img
+                src={CORNER_GIF_URL}
+                alt="Dancing shark"
+                className="h-24 w-24 rounded-md object-cover"
+              />
+              <span className="absolute bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded px-2 py-0.5 text-[10px] font-medium text-black">
+                Happy diving!
+              </span>
+            </div>
+          </div>
+        )}
         <p className="mt-10 text-end text-xs text-slate-500 dark:text-slate-400">
           {t("privacyDisclaimer")}
         </p>
