@@ -44,6 +44,11 @@ export function SsiImportGuideDialog({ open, onClose }: SsiImportGuideDialogProp
           <li>{t("importGuide.steps.step3")}</li>
           <li>{t("importGuide.steps.step4")}</li>
         </ol>
+        <img
+          src="/img/ssiImport.png"
+          alt={t("importGuide.title")}
+          className="mt-4 mx-auto block h-auto max-h-[500px] w-auto max-w-full rounded-lg border border-slate-200 dark:border-slate-700"
+        />
       </div>
     </div>
   );

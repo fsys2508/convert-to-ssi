@@ -2,6 +2,35 @@
 
 Import dive logs from supported devices (e.g. Garmin `.fit`) and generate a QR code for import into the SSI app.
 
+## Table of contents
+
+- [How it works](#how-it-works)
+  - [Export from Garmin Connect](#export-from-garmin-connect)
+  - [Import into the SSI app](#import-into-the-ssi-app)
+- [Stack](#stack)
+- [Structure](#structure)
+- [Run locally](#run-locally)
+- [Tests](#tests)
+- [Deploy (Vercel)](#deploy-vercel)
+- [Supported sources](#supported-sources)
+- [Privacy](#privacy)
+- [License](#license)
+- [Legal](#legal)
+
+## How it works
+
+1. **Export** a dive from Garmin Connect as a `.fit` (or `.zip`) file.
+2. **Upload** it here to generate an SSI-ready QR code.
+3. **Scan** the QR code in the SSI app to prefill a new dive log.
+
+### Export from Garmin Connect
+
+<img src="public/img/garminExport.png" alt="Exporting a dive .fit file from Garmin Connect" height="500" />
+
+### Import into the SSI app
+
+<img src="public/img/ssiImport.png" alt="Scanning the generated QR code in the SSI app" height="500" />
+
 ## Stack
 
 - **Frontend & API:** Next.js 14 (App Router), TypeScript, Tailwind CSS

@@ -54,6 +54,11 @@ export function GarminExportGuideDialog({ open, onClose }: GarminExportGuideDial
         >
           {t("guide.openGarmin")}
         </a>
+        <img
+          src="/img/garminExport.png"
+          alt={t("guide.title")}
+          className="mt-4 mx-auto block h-auto max-h-[500px] w-auto max-w-full rounded-lg border border-slate-200 dark:border-slate-700"
+        />
       </div>
     </div>
   );

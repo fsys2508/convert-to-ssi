@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Garmin to SSI Converter",
   description:
-    "Convert Garmin .fit dive logs to SSI-ready QR code payloads. Upload one or multiple logs and generate data for SSI app import.",
+    "Convert Garmin .fit files into SSI App QR codes. Auto-import dive details and reduce the need for manual entry.",
   keywords: [
     "garmin to ssi",
     "garmin ssi converter",

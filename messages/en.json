@@ -1,16 +1,16 @@
 {
   "App": {
     "title": "Garmin to SSI Converter",
-    "description": "Convert Garmin .fit dive logs into an SSI-ready QR code for easy import."
+    "description": "Convert Garmin .fit files into SSI App QR codes. Auto-import dive details and reduce the need for manual entry."
   },
   "Home": {
     "heading": "Garmin to SSI Converter",
-    "intro": "Upload Garmin .fit dive logs to generate an SSI app QR code.",
-    "introPrefix": "Upload Garmin",
-    "introFitTerm": ".fit dive logs",
-    "introMiddle": "to obtain a QR code",
-    "introQrTerm": "readable by the SSI app",
-    "introSuffix": "",
+    "intro": "Convert Garmin .fit files into SSI App QR codes. Auto-import dive details and reduce the need for manual entry.",
+    "introPrefix": "Convert",
+    "introFitTerm": "Garmin .fit files",
+    "introMiddle": "into",
+    "introQrTerm": "SSI App QR codes",
+    "introSuffix": "Auto-import dive details and reduce the need for manual entry.",
     "guide": {
       "link": "How to export .fit from Garmin Connect",
       "title": "Export .fit from Garmin Connect",

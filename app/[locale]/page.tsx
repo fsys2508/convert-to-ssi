@@ -382,37 +382,31 @@ export default function Home() {
             </h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               {t("introPrefix")}{" "}
-              <span className="inline-flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  track("guide_export_opened");
+                  setShowGuideDialog(true);
+                }}
+                className="cursor-help border-b border-dotted border-slate-500 text-slate-700 transition hover:border-slate-700 hover:text-slate-900 dark:border-slate-400 dark:text-slate-200 dark:hover:border-slate-200 dark:hover:text-slate-50"
+                title={t("guide.link")}
+              >
                 {t("introFitTerm")}
-                <button
-                  type="button"
-                  onClick={() => {
-                    track("guide_export_opened");
-                    setShowGuideDialog(true);
-                  }}
-                  className="relative -top-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-slate-300 text-[9px] font-semibold leading-none text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                  aria-label={t("guide.link")}
-                  title={t("guide.link")}
-                >
-                  ?
-                </button>
-              </span>{" "}
+              </button>{" "}
               {t("introMiddle")}{" "}
-              <span className="inline-flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  track("guide_import_opened");
+                  setShowImportGuideDialog(true);
+                }}
+                className="cursor-help border-b border-dotted border-slate-500 text-slate-700 transition hover:border-slate-700 hover:text-slate-900 dark:border-slate-400 dark:text-slate-200 dark:hover:border-slate-200 dark:hover:text-slate-50"
+                title={t("importGuide.link")}
+              >
                 {t("introQrTerm")}
-                <button
-                  type="button"
-                  onClick={() => {
-                    track("guide_import_opened");
-                    setShowImportGuideDialog(true);
-                  }}
-                  className="relative -top-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-slate-300 text-[9px] font-semibold leading-none text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                  aria-label={t("importGuide.link")}
-                  title={t("importGuide.link")}
-                >
-                  ?
-                </button>
-              </span>
+              </button>
+              {locale === "zh" ? "。" : "."}
+              <br />
               {t("introSuffix")}
             </p>
           </div>
