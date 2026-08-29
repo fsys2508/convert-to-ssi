@@ -27,7 +27,8 @@ convert-to-ssi/
 │   ├── garmin-export-guide-dialog.tsx
 │   └── ssi-import-guide-dialog.tsx
 ├── lib/
-│   └── fit-to-ssi.ts          # FIT decode → SSI mapping → QR payload
+│   ├── fit-to-ssi.ts          # FIT decode → SSI mapping → QR payload
+│   └── upload-limits.ts       # Upload size limit (10 MB)
 ├── messages/
 │   ├── en.json
 │   └── zh.json
@@ -47,6 +48,12 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Tests
+
+```bash
+npm test
+```
 
 ## Deploy (Vercel)
 

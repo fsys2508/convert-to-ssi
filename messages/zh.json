@@ -38,7 +38,7 @@
       }
     },
     "ssiDefaultsTitle": "SSI 預設值（可選）",
-    "ssiDefaultsHint": "這些 ID 是 SSI 的分類值。除非你確定需要修改，否則建議維持預設。",
+    "ssiDefaultsHint": "這些 ID 是 SSI 的分類值，除非你確定需要修改，否則建議維持預設",
     "ssiFieldLabels": {
       "var_weather_id": "天氣",
       "var_entry_id": "入水方式",
@@ -57,7 +57,8 @@
     "upload": "上傳",
     "processing": "處理中…",
     "uploadFailed": "上傳失敗",
-    "invalidZip": "ZIP 壓縮檔內只能有一個 .fit 檔案。",
+    "invalidZip": "ZIP 壓縮檔內只能有一個 .fit 檔案",
+    "fileTooLarge": "檔案上傳上限為 10 MB",
     "privacyDisclaimer": "免責聲明：本網站不會儲存任何上傳檔案或處理後的潛水資料",
     "diveTable": {
       "desc": "由於技術限制，以下列出未納入QR Code, 但在手動輸入時有幫助的資料",

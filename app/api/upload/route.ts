@@ -6,6 +6,7 @@ import {
   fitDataToSsiData,
   ssiDataToQrPayload,
 } from "@/lib/fit-to-ssi";
+import { isUploadTooLarge } from "@/lib/upload-limits";
 
 function parseOptionalNumber(v: FormDataEntryValue | null): number | undefined {
   if (v == null) return undefined;
@@ -21,6 +22,13 @@ function isExplicitEmpty(v: FormDataEntryValue | null): boolean {
   return typeof v === "string" && v.trim() === "empty";
 }
 
+function fileTooLargeResponse() {
+  return NextResponse.json(
+    { error: "File exceeds the 10 MB upload limit.", errorKey: "fileTooLarge" },
+    { status: 413 }
+  );
+}
+
 /**
  * POST /api/upload
  * Accepts a .fit or .zip file (multipart/form-data), decodes a single FIT payload,
@@ -28,6 +36,14 @@ function isExplicitEmpty(v: FormDataEntryValue | null): boolean {
  */
 export async function POST(request: NextRequest) {
   try {
+    const contentLength = request.headers.get("content-length");
+    if (contentLength != null) {
+      const declaredSize = Number(contentLength);
+      if (isUploadTooLarge(declaredSize)) {
+        return fileTooLargeResponse();
+      }
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
     const clientTimeZoneRaw = formData.get("clientTimeZone");
@@ -49,7 +65,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const fileObj = file as { arrayBuffer(): Promise<ArrayBuffer>; name: string };
+    const fileObj = file as {
+      arrayBuffer(): Promise<ArrayBuffer>;
+      name: string;
+      size?: number;
+    };
+    if (typeof fileObj.size === "number" && isUploadTooLarge(fileObj.size)) {
+      return fileTooLargeResponse();
+    }
+
     const fileNameLower = fileObj.name.toLowerCase();
     const isFit = fileNameLower.endsWith(".fit");
     const isZip = fileNameLower.endsWith(".zip");
@@ -61,6 +85,9 @@ export async function POST(request: NextRequest) {
     }
 
     let arrayBuffer = await fileObj.arrayBuffer();
+    if (isUploadTooLarge(arrayBuffer.byteLength)) {
+      return fileTooLargeResponse();
+    }
     if (isZip) {
       const zipDirectory = await unzipper.Open.buffer(Buffer.from(arrayBuffer));
       const fitEntries = zipDirectory.files.filter(
@@ -73,6 +100,9 @@ export async function POST(request: NextRequest) {
         );
       }
       const fitBuffer = await fitEntries[0].buffer();
+      if (isUploadTooLarge(fitBuffer.byteLength)) {
+        return fileTooLargeResponse();
+      }
       const fitArrayBuffer = new ArrayBuffer(fitBuffer.byteLength);
       new Uint8Array(fitArrayBuffer).set(fitBuffer);
       arrayBuffer = fitArrayBuffer;

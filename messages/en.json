@@ -58,6 +58,7 @@
     "processing": "Processing…",
     "uploadFailed": "Upload failed",
     "invalidZip": "ZIP must contain only one .fit file.",
+    "fileTooLarge": "File is too large. Maximum size is 10 MB.",
     "privacyDisclaimer": "Disclaimer: This website does not store any uploaded files or processed dive data",
     "diveTable": {
       "desc": "Due to QR code limitation, here are some data that are useful while doing manual input",

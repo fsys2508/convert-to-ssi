@@ -7,6 +7,7 @@ import { MoonIcon, SunIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useDropzone } from "react-dropzone";
 import { GarminExportGuideDialog } from "@/components/garmin-export-guide-dialog";
 import { SsiImportGuideDialog } from "@/components/ssi-import-guide-dialog";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
 import { track } from "@vercel/analytics";
 
 function parseSsiDatetime(raw: string): Date | null {
@@ -276,6 +277,7 @@ export default function Home() {
     multiple: false,
     disabled: loading,
     maxFiles: 1,
+    maxSize: MAX_UPLOAD_BYTES,
     accept: {
       "application/zip": [".zip"],
       "application/x-zip-compressed": [".zip"],
@@ -288,7 +290,14 @@ export default function Home() {
       handleNewFileSelected(nextFile);
       track("upload_file_selected");
     },
-    onDropRejected: () => {
+    onDropRejected: (fileRejections) => {
+      const codes = new Set(
+        fileRejections.flatMap((rejection) => rejection.errors.map((e) => e.code))
+      );
+      if (codes.has("file-too-large")) {
+        setError(t("fileTooLarge"));
+        return;
+      }
       setError(t("invalidZip"));
     },
   });
@@ -324,10 +333,13 @@ export default function Home() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const invalidZip = res.status === 400;
-        throw new Error(
-            invalidZip ? t("invalidZip") :  t("uploadFailed")
-        );
+        if (data?.errorKey === "fileTooLarge" || res.status === 413) {
+          throw new Error(t("fileTooLarge"));
+        }
+        if (data?.errorKey === "zipInvalid" || res.status === 400) {
+          throw new Error(t("invalidZip"));
+        }
+        throw new Error(t("uploadFailed"));
       }
       setResult({ dive: data.dive, qrDataUrl: data.qrDataUrl, qrPayload: data.qrPayload });
       setHiddenResult(null);
