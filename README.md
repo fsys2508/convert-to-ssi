@@ -84,6 +84,8 @@ Open [http://localhost:3000](http://localhost:3000).
 npm test
 ```
 
+GitHub Actions also runs `npm test` and `npm run build` on pushes and pull requests to `master`.
+
 ## Deploy (Vercel)
 
 ```bash
