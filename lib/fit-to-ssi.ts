@@ -112,8 +112,8 @@ function inferTimeZoneFromSession(session: Record<string, unknown>): string | un
       if (Array.isArray(zones) && zones.length > 0 && typeof zones[0] === "string") {
         return zones[0];
       }
-    } catch(e) {
-      console.log('>>>>>>>>e: ', e);
+    } catch {
+      // geo-tz lookup can fail for edge coordinates; try next candidate.
     }
   }
   return undefined;
