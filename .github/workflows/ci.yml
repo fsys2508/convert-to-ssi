@@ -3,7 +3,7 @@ name: Build and Deploy to Vercel
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
